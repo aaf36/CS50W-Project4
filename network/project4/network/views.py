@@ -3,6 +3,8 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+from .models import Post
+
 
 from .models import User
 
@@ -61,3 +63,22 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "network/register.html")
+
+
+# create post
+def new_post(request):
+    if request.method == "POST":
+        text = request.POST["text"]
+        user = request.user
+        # create new post object
+        post = Post.objects.create(pub_user = user , Post_text = text)
+    else:
+        return render(request, "network/new.html")
+    
+    return render(request, "network/index.html")
+
+# view all posts
+def view_all(request):
+    #retrieve all posts ordered from latest created
+    posts = Post.objects.all().order_by('-pub_dateTime')
+    return render(request, "network/allPosts.html", {"posts":posts})

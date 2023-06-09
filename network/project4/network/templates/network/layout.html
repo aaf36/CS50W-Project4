@@ -20,9 +20,12 @@
                     </li>
                 {% endif %}
                 <li class="nav-item">
-                  <a class="nav-link" href="{% url 'index' %}">All Posts</a>
+                  <a class="nav-link" href="{% url 'all_posts' %}">All Posts</a>
                 </li>
                 {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'new_post' %}">New Post</a>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">Following</a>
                     </li>
