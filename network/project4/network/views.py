@@ -72,6 +72,7 @@ def new_post(request):
         user = request.user
         # create new post object
         post = Post.objects.create(pub_user = user , Post_text = text)
+        post.save()
     else:
         return render(request, "network/new.html")
     
@@ -79,6 +80,35 @@ def new_post(request):
 
 # view all posts
 def view_all(request):
-    #retrieve all posts ordered from latest created
+    #retrieve all posts ordered from latest 
     posts = Post.objects.all().order_by('-pub_dateTime')
     return render(request, "network/allPosts.html", {"posts":posts})
+
+
+#user profile page
+def profile_view(request, username):
+    # retrieve the profile user and posts
+    user = User.objects.get(username=username)
+    # retrieve user's posts
+    posts = Post.objects.filter(pub_user = user).order_by('-pub_dateTime')
+    # retrieve user's followers and following count
+    followers_num = user.followers.all().count()
+    following_num = user.following.all().count()
+    #checks if the requesting user is following the profile user
+    is_following = request.user.following.filter(username=username).exists()
+
+    return render(request, "network/profile.html" , {"username" : user.username , "posts": posts, "followers": followers_num, "following": following_num, "is_following":is_following})
+
+# follow
+def follow(request,username):
+    user= request.user
+    following_user = User.objects.get(username=username)
+    user.following.add(following_user)
+    return render(request, "network/index.html")
+
+#unfollow
+def unfollow(request, username):
+    user =request.user
+    following_user = User.objects.get(username=username)
+    user.following.remove(following_user)
+    return render(request, "network/index.html")
