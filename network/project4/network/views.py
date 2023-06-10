@@ -112,3 +112,15 @@ def unfollow(request, username):
     following_user = User.objects.get(username=username)
     user.following.remove(following_user)
     return render(request, "network/index.html")
+
+#following page
+def following(request):
+    user = request.user
+    following_users = user.following.all()
+    posts = []
+    for following_user in following_users:
+        # Retrieve each post from each user from the user's followings
+        user_posts = Post.objects.filter(pub_user=following_user)
+        for post in user_posts:
+            posts.append(post)
+    return render(request, "network/following.html", {"posts": posts})
