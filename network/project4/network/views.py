@@ -4,7 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from .models import Post
-
+from django.core.paginator import Paginator
 
 from .models import User
 
@@ -82,7 +82,10 @@ def new_post(request):
 def view_all(request):
     #retrieve all posts ordered from latest 
     posts = Post.objects.all().order_by('-pub_dateTime')
-    return render(request, "network/allPosts.html", {"posts":posts})
+    paginator = Paginator(posts, 10) #show 10 posts per page.
+    page_num = request.GET.get('page')
+    page_obj = paginator.get_page(page_num)
+    return render(request, "network/allPosts.html", {"page_obj":page_obj})
 
 
 #user profile page
@@ -124,3 +127,5 @@ def following(request):
         for post in user_posts:
             posts.append(post)
     return render(request, "network/following.html", {"posts": posts})
+
+
